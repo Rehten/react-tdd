@@ -11,8 +11,14 @@ export const Appointment = (props) => {
     return (<div>{firstName}</div>);
 };
 
-export const AppointmentsDayView = props => (<div id={'appointmentsDayView'}>
-    <ol>
-        {props.appointments.map((appointment) => (<li key={appointment.startsAt} >{appointmentTimeOfDay(appointment.startsAt)}</li>))}
-    </ol>
-</div>);
+export const AppointmentsDayView = props => {
+    return (<div id={'appointmentsDayView'}>
+        <ol>
+            {props.appointments
+                .map((appointment) => {
+                    return (<li key={appointment.startsAt} >{appointmentTimeOfDay(appointment.startsAt)}</li>)
+                })}
+        </ol>
+        {props.appointments.length ? (<Appointment {...props.appointments[0]} />) : <p>There are no appointments scheduled for today</p>}
+    </div>);
+};
