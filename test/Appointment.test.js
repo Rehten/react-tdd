@@ -54,7 +54,7 @@ describe('AppointsmentsDayView', () => {
 
     it('render multiple appointmentsin an ol element', () => {
         const today = new Date();
-        const appointments = [{startsAs: today.setHours(12, 0)}, {startsAt: today.setHours(13, 0)}];
+        const appointments = [{startsAt: today.setHours(12, 0)}, {startsAt: today.setHours(13, 0)}];
 
         document.body.appendChild(container);
 

@@ -7,6 +7,6 @@ export const Appointment = (props) => {
 
 export const AppointmentsDayView = props => (<div id={'appointmentsDayView'}>
     <ol>
-        {props.appointments.map(() => (<div />))}
+        {props.appointments.map((appointment) => (<div key={appointment.startsAt} />))}
     </ol>
 </div>);
