@@ -6,55 +6,64 @@ export const sampleAppointments = [
     {
         startsAt: at(9),
         customer: {
-            firstName: 'Charlie'
+            firstName: 'Charlie',
+            lastName: 'Charlie'.split('').reverse().join('')
         }
     },
     {
         startsAt: at(10),
         customer: {
-            firstName: 'Frankie'
+            firstName: 'Frankie',
+            lastName: 'Frankie'.split('').reverse().join('')
         }
     },
     {
         startsAt: at(11),
         customer: {
-            firstName: 'Casey'
+            firstName: 'Casey',
+            lastName: 'Casey'.split('').reverse().join('')
         }
     },
     {
         startsAt: at(12),
         customer: {
-            firstName: 'Ashley'
+            firstName: 'Ashley',
+            lastName: 'Ashley'.split('').reverse().join('')
         }
     },
     {
         startsAt: at(13),
         customer: {
-            firstName: 'Jordan'
+            firstName: 'Jordan',
+            lastName: 'Jordan'.split('').reverse().join('')
         }
     },
     {
         startsAt: at(14),
         customer: {
-            firstName: 'Jay'
+            firstName: 'Jay',
+            lastName: 'Jay'.split('').reverse().join('')
         }
     },
     {
         startsAt: at(15),
         customer: {
-            firstName: 'Alex'
+            firstName: 'Alex',
+            lastName: 'Alex'.split('').reverse().join('')
         }
     },
     {
         startsAt: at(16),
         customer: {
-            firstName: 'Jules'
+            firstName: 'Jules',
+            lastName: 'Jules'.split('').reverse().join('')
         }
     },
     {
         startsAt: at(17),
         customer: {
-            firstName: 'Stevie'
+            firstName: 'Stevie',
+            lastName: 'Stevie'.split('').reverse().join('')
         }
     }
 ];

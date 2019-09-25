@@ -7,8 +7,8 @@ const appointmentTimeOfDay = startsAt => {
 }
 
 export const Appointment = (props) => {
-    const {firstName} = props.customer;
-    return (<div>{firstName}</div>);
+    const {firstName, lastName} = props.customer;
+    return (<div>{firstName} {lastName}</div>);
 };
 
 export const AppointmentsDayView = props => {

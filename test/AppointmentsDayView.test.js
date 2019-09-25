@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Appointment, AppointmentsDayView} from "../src/Appointment";
+import {AppointmentsDayView, Appointment} from "../src/AppointmentsDayView";
 import ReactTestUtils from 'react-dom/test-utils';
 
-describe('Appointment', () => {
+describe('AppointmentsDayView', () => {
     let container;
     let customer;
 
@@ -31,6 +31,15 @@ describe('Appointment', () => {
 
         expect(container.textContent).toMatch('Jordan');
     });
+
+    it('renders the customer last name', function () {
+        const customer = {firstName: 'Ashley', lastName: 'Green'};
+        const component = <Appointment customer={customer}/>;
+
+        render(component);
+
+        expect(container.textContent).toMatch('Green');
+    });
 });
 
 describe('AppointsmentsDayView', () => {
@@ -40,13 +49,15 @@ describe('AppointsmentsDayView', () => {
         {
             startsAt: today.setHours(12, 0),
             customer: {
-                firstName: 'Ashley'
+                firstName: 'Ashley',
+                lastName: 'Green'
             }
         },
         {
             startsAt: today.setHours(13, 0),
             customer: {
-                firstName: 'Jordan'
+                firstName: 'Jordan',
+                lastName: 'Green'
             }
         }
     ];
