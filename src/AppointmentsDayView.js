@@ -7,8 +7,26 @@ const appointmentTimeOfDay = startsAt => {
 }
 
 export const Appointment = (props) => {
-    const {firstName, lastName} = props.customer;
-    return (<div>{firstName} {lastName}</div>);
+    const {
+        firstName,
+        lastName,
+        phoneNumber,
+        stylist,
+        service,
+        notes
+    } = props.customer;
+    return (<table>
+        <tbody>
+        <tr>
+            <td>{firstName}</td>
+            <td>{lastName}</td>
+            <td>{phoneNumber}</td>
+            <td>{stylist}</td>
+            <td>{service}</td>
+            <td>{notes}</td>
+        </tr>
+        </tbody>
+    </table>);
 };
 
 export const AppointmentsDayView = props => {
@@ -18,19 +36,19 @@ export const AppointmentsDayView = props => {
         <ol>
             {props.appointments
                 .map((appointment, i) => {
-                    return (<li key={appointment.startsAt} >
-                                <button type="button" onClick={() => setSelectedAppointment(i)}>
-                                    {appointmentTimeOfDay(appointment.startsAt)}
-                                    </button>
-                            </li>);
+                    return (<li key={appointment.startsAt}>
+                        <button type="button" onClick={() => setSelectedAppointment(i)}>
+                            {appointmentTimeOfDay(appointment.startsAt)}
+                        </button>
+                    </li>);
                 })}
         </ol>
         {
             props.appointments.length
-            ?
-            (<Appointment {...props.appointments[selectedAppointment]} />)
-            :
-            <p>There are no appointments scheduled for today</p>
+                ?
+                (<Appointment {...props.appointments[selectedAppointment]} />)
+                :
+                <p>There are no appointments scheduled for today</p>
         }
     </div>);
 };

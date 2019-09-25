@@ -40,6 +40,36 @@ describe('AppointmentsDayView', () => {
 
         expect(container.textContent).toMatch('Green');
     });
+
+    it('render a table', () => {
+        const customer = {firstName: 'Ashley', lastName: 'Green'};
+        const component = <Appointment customer={customer}/>;
+
+        render(component);
+
+        expect(container.querySelectorAll('table')[0].tagName.toLowerCase()).toEqual('table');
+    });
+
+    it('table has a customer data', () => {
+        const customer = {
+            firstName: 'Ashley',
+            lastName: 'Green',
+            phoneNumber: '+7 (999) 99-99-999',
+            stylist: 'Jordan',
+            service: 'Taxi',
+            notes: '18-year old girl'
+        };
+        const component = <Appointment customer={customer}/>;
+
+        render(component);
+
+        expect(container.querySelectorAll('table > tbody > tr > td')[0].textContent).toEqual('Ashley');
+        expect(container.querySelectorAll('table > tbody > tr > td')[1].textContent).toEqual('Green');
+        expect(container.querySelectorAll('table > tbody > tr > td')[2].textContent).toEqual('+7 (999) 99-99-999');
+        expect(container.querySelectorAll('table > tbody > tr > td')[3].textContent).toEqual('Jordan');
+        expect(container.querySelectorAll('table > tbody > tr > td')[4].textContent).toEqual('Taxi');
+        expect(container.querySelectorAll('table > tbody > tr > td')[5].textContent).toEqual('18-year old girl');
+    })
 });
 
 describe('AppointsmentsDayView', () => {
