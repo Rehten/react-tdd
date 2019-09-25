@@ -16,7 +16,9 @@ export const AppointmentsDayView = props => {
         <ol>
             {props.appointments
                 .map((appointment) => {
-                    return (<li key={appointment.startsAt} >{appointmentTimeOfDay(appointment.startsAt)}</li>)
+                    return (<li key={appointment.startsAt} >
+                        <button type="button">{appointmentTimeOfDay(appointment.startsAt)}</button>
+                    </li>)
                 })}
         </ol>
         {props.appointments.length ? (<Appointment {...props.appointments[0]} />) : <p>There are no appointments scheduled for today</p>}
