@@ -50,4 +50,14 @@ describe('CustomerForm', () => {
         render(<CustomerForm />);
         expect(firstNameField().id).toEqual('firstName');
     });
+
+    it('save existing first name when submitted', async () => {
+        expect.hasAssertions();
+
+        render(<CustomerForm firstName={'Ashley'} onSubmit={({firstName}) => {
+            expect(firstName).toEqual('Ashley');
+        }} />);
+
+        await ReactTestUtils.Simulate.submit(form('customer'));
+    });
 });
