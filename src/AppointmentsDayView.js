@@ -7,14 +7,7 @@ const appointmentTimeOfDay = startsAt => {
 }
 
 export const Appointment = (props) => {
-    const {
-        firstName,
-        lastName,
-        phoneNumber,
-        stylist,
-        service,
-        notes
-    } = props.customer;
+    const {firstName, lastName, phoneNumber, stylist, service, notes} = props.customer;
     return (<table>
         <tbody>
         <tr>

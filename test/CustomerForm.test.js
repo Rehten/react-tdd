@@ -7,6 +7,13 @@ import {CustomerForm} from "../src/CustomerForm";
 describe('CustomerForm', () => {
     let render, container;
     const form = id => container.querySelector('form[id="' + id + '"]');
+    const firstNameField = () => form('customer').elements.firstName;
+    const expectToBeInputFieldTypeText = formElement => {
+        expect(formElement).not.toBeNull();
+        expect(formElement).toBeDefined();
+        expect(formElement.tagName).toEqual('INPUT');
+        expect(formElement.type).toEqual('text');
+    };
 
     beforeEach(() => {
         ({render, container} = createContainer());
@@ -20,13 +27,12 @@ describe('CustomerForm', () => {
     it('renders first field as text input', () => {
         render(<CustomerForm />);
 
-        {
-            const field = form('customer').elements.firstName;
+        expectToBeInputFieldTypeText(firstNameField());
+    });
 
-            expect(field).not.toBeNull();
-            expect(field).toBeDefined();
-            expect(field.tagName).toEqual('INPUT');
-            expect(field.type).toEqual('text');
-        }
+    it('includes existing value for the first field', () => {
+        render(<CustomerForm firstName={'Ashley'} />);
+
+        expect(firstNameField().value).toEqual('Ashley');
     });
 });
