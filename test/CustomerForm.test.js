@@ -125,4 +125,12 @@ describe('CustomerForm', () => {
         itSavesNewNameWhenSubmitted('phoneNumber', '79125577556', '79865522883');
     });
 
+    it('has a submit button', () => {
+        render(<CustomerForm/>);
+
+        expect(container.querySelector('input[type="submit"]')).not.toBeNull();
+        expect(container.querySelector('input[type="submit"]')).toBeDefined();
+        expect(container.querySelector('input[type="submit"]').value).toEqual('Add');
+    });
+
 });

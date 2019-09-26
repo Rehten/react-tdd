@@ -29,5 +29,6 @@ export const CustomerForm = ({firstName, lastName, phoneNumber, onSubmit}) => {
                     value={phoneNumber}
                     onChange={handleChangeCustomer}
                 />
+                <input type="submit" value={'Add'} />
             </form>);
 };
