@@ -9,6 +9,7 @@ describe('CustomerForm', () => {
     let render, container;
     const form = id => container.querySelector('form[id="' + id + '"]');
     const field = name => form('appointment').elements[name];
+    const label = name => container.querySelector(`label[for="${name}"]`);
     const findOption = (dropdownNode, textContent) => {
         return Array.from(dropdownNode).find(option => option.textContent === textContent);
     };
@@ -67,6 +68,24 @@ describe('CustomerForm', () => {
             render(<AppointmentForm selectableServices={services} service='Blow-dry' />);
 
             expect(findOption(field('service'), 'Blow-dry').selected).toBeTruthy();
+        });
+
+        it('renders a label', () => {
+            render(<AppointmentForm/>);
+
+            expect(label('service')).not.toBeNull();
+            expect(label('service')).toBeDefined();
+            expect(label('service').tagName).toEqual('LABEL');
+        });
+
+        it('label has for attr equal id of the select field', () => {
+            render(<AppointmentForm/>);
+
+            {
+                const targetId = label('service').getAttribute('for');
+
+                expect(container.querySelector(`#${targetId}`) === field('service')).toBeTruthy();
+            }
         });
     });
 });
