@@ -8,6 +8,10 @@ import {AppointmentForm} from "../src/AppointmentForm";
 describe('CustomerForm', () => {
     let render, container;
     const form = id => container.querySelector('form[id="' + id + '"]');
+    const field = name => form('appointment').elements[name];
+    const findOption = (dropdownNode, textContent) => {
+        return Array.from(dropdownNode).find(option => option.textContent === textContent);
+    };
 
     beforeEach(() => {
         ({render, container} = createContainer());
@@ -17,5 +21,52 @@ describe('CustomerForm', () => {
         render(<AppointmentForm />);
 
         expect(form('appointment')).not.toBeNull();
+    });
+
+    describe('service field', () => {
+        it('render a select box', () => {
+            render(<AppointmentForm />);
+
+            expect(field('service')).not.toBeNull();
+            expect(field('service').tagName).toEqual('SELECT');
+        });
+
+        it('initially has a blank value', () => {
+            render(<AppointmentForm />);
+
+            const firstNode = field('service').childNodes[0];
+
+            expect(firstNode.value).toEqual('');
+            expect(firstNode.selected).toBeTruthy();
+        });
+
+        it('lists all salon services', () => {
+            const selectableServices = [
+                'Cut',
+                'Blow-dry',
+                'Cut & color',
+                'Beard trim',
+                'Cut & beard trim',
+                'Extensions'
+            ];
+
+            render(<AppointmentForm selectableServices={selectableServices} />);
+
+            {
+                const optionNodes = Array.from(field('service').childNodes);
+
+                const renderedServices = optionNodes.map(node => node.textContent);
+
+                expect(renderedServices).toEqual(expect.arrayContaining(selectableServices));
+            }
+        });
+
+        it('preselects the existing value', () => {
+            const services = ['Cut', 'Blow-dry'];
+
+            render(<AppointmentForm selectableServices={services} service='Blow-dry' />);
+
+            expect(findOption(field('service'), 'Blow-dry').selected).toBeTruthy();
+        });
     });
 });
