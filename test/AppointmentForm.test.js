@@ -124,4 +124,28 @@ describe('CustomerForm', () => {
             await ReactTestUtils.Simulate.submit(form('appointment'));
         });
     });
+
+    describe('time slot table', () => {
+        const timeSlotTable = () => container.querySelector('table#timeslots');
+
+        it('renders a table for time slots', () => {
+            render(<AppointmentForm/>);
+
+            expect(timeSlotTable()).not.toBeNull();
+        });
+
+        it('renders a time slot for every half an hour between open and close times', () => {
+            render(<AppointmentForm salonOpensAt={9} salonClosesAt={11} />);
+
+            {
+                const timesOfDay = timeSlotTable().querySelectorAll('tbody >* th');
+
+                expect(timesOfDay).toHaveLength(4);
+                expect(timesOfDay[0].textContent).toEqual('09:00');
+                expect(timesOfDay[1].textContent).toEqual('09:30');
+                expect(timesOfDay[2].textContent).toEqual('10:00');
+                expect(timesOfDay[3].textContent).toEqual('10:30');
+            }
+        });
+    });
 });
