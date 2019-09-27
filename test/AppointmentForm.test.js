@@ -98,16 +98,30 @@ describe('CustomerForm', () => {
             await ReactTestUtils.Simulate.submit(form('appointment'));
         });
 
-        // it(`save existing name when submitted`, async () => {
-        //     expect.hasAssertions();
-        //
-        //     render(<AppointmentForm service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
-        //         expect(form.service).toEqual('Abcdef');
-        //     }} />);
-        //
-        //     await ReactTestUtils.Simulate.change(field('service'), {target: {value: 'Abcdef'}});
-        //
-        //     await ReactTestUtils.Simulate.submit(form('appointment'));
-        // });
+        it(`save new name when submitted after click option`, async () => {
+            expect.hasAssertions();
+
+            render(<AppointmentForm service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
+                expect(form.service).toEqual('');
+                expect(field('service').value).toEqual('');
+            }} />);
+
+            await ReactTestUtils.Simulate.click(field('service').childNodes[0]);
+
+            await ReactTestUtils.Simulate.submit(form('appointment'));
+        });
+
+        it(`save new custom value when submitted after click option`, async () => {
+            expect.hasAssertions();
+
+            render(<AppointmentForm service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
+                expect(form.service).toEqual('Abcdef');
+                expect(field('service').value).toEqual('Abcdef');
+            }} />);
+
+            await ReactTestUtils.Simulate.click(field('service').childNodes[2]);
+
+            await ReactTestUtils.Simulate.submit(form('appointment'));
+        });
     });
 });
