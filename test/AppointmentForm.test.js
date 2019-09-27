@@ -87,5 +87,27 @@ describe('CustomerForm', () => {
                 expect(container.querySelector(`#${targetId}`) === field('service')).toBeTruthy();
             }
         });
+
+        it(`save existing name when submitted`, async () => {
+            expect.hasAssertions();
+
+            render(<AppointmentForm service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
+                expect(form.service).toEqual('Qwerty');
+            }} />);
+
+            await ReactTestUtils.Simulate.submit(form('appointment'));
+        });
+
+        // it(`save existing name when submitted`, async () => {
+        //     expect.hasAssertions();
+        //
+        //     render(<AppointmentForm service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
+        //         expect(form.service).toEqual('Abcdef');
+        //     }} />);
+        //
+        //     await ReactTestUtils.Simulate.change(field('service'), {target: {value: 'Abcdef'}});
+        //
+        //     await ReactTestUtils.Simulate.submit(form('appointment'));
+        // });
     });
 });
