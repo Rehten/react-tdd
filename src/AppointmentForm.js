@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 
 export const AppointmentForm = ({
                                     selectableServices,
@@ -9,12 +9,15 @@ export const AppointmentForm = ({
                                     today,
                                     availableTimeSlots
                                 }) => {
-    const [form, setForm] = useState({service});
-    const handleSelect = ({target}) => setForm(form => ({service: target.value}));
+    const [appointment, setAppointment] = useState({service});
+    const handleSelect = ({target}) => setAppointment(form => ({service: target.value}));
+    const handleStartsAtChange = useCallback(({target: {value}}) => setAppointment(appointment => {
+        return ({...appointment, startsAt: parseInt(value)});
+    }));
 
-    return (<form id={'appointment'} onSubmit={() => onSubmit(form)}>
+    return (<form id={'appointment'} onSubmit={() => onSubmit(appointment)}>
         <label htmlFor="service">Customer:</label>
-        <select value={form.service} id={'service'} name={'service'} readOnly>
+        <select value={appointment.service} id={'service'} name={'service'} readOnly>
             <option onClick={handleSelect}/>
             {selectableServices.map(s => (<option key={s} value={s} onClick={handleSelect}>{s}</option>))}
         </select>
@@ -23,6 +26,8 @@ export const AppointmentForm = ({
             salonClosesAt={salonClosesAt}
             today={today}
             availableTimeSlots={availableTimeSlots}
+            checkedTimeSlot={appointment.startsAt}
+            handleChange={handleStartsAtChange}
         />
     </form>)
 };
@@ -38,7 +43,7 @@ AppointmentForm.defaultProps = {
     availableTimeSlots: []
 };
 
-const TimeSlotTable = ({salonOpensAt, salonClosesAt, today, availableTimeSlots}) => {
+const TimeSlotTable = ({salonOpensAt, salonClosesAt, today, availableTimeSlots, checkedTimeSlot, handleChange}) => {
     const timeSlots = dayliTimeSlots(salonOpensAt, salonClosesAt);
     const dates = weeklyDateValues(today);
 
@@ -55,8 +60,13 @@ const TimeSlotTable = ({salonOpensAt, salonClosesAt, today, availableTimeSlots})
                 <th>{toTimeValue(timeSlot)}</th>
                 {dates.map(date => (<td key={date}>
                     {
-                        <RadioButtonIfAvailable availableTimeSlots={availableTimeSlots} date={date}
-                                                timeSlot={timeSlot}/>
+                        <RadioButtonIfAvailable
+                            availableTimeSlots={availableTimeSlots}
+                            date={date}
+                            timeSlot={timeSlot}
+                            checkedTimeSlot={checkedTimeSlot}
+                            handleChange={handleChange}
+                        />
                     }
                 </td>))}
             </tr>)
@@ -65,13 +75,20 @@ const TimeSlotTable = ({salonOpensAt, salonClosesAt, today, availableTimeSlots})
     </table>);
 };
 
-const RadioButtonIfAvailable = ({availableTimeSlots, date, timeSlot}) => {
+const RadioButtonIfAvailable = ({availableTimeSlots, date, timeSlot, checkedTimeSlot, handleChange}) => {
     const isButtonExists = (availableTimeSlots
         .some(availableTimeSlot => availableTimeSlot.startsAt === mergeDateAndTime(date, timeSlot)));
     const startsAt = mergeDateAndTime(date, timeSlot);
+    const isChecked = (startsAt === checkedTimeSlot);
 
     if (isButtonExists) {
-        return (<input name={'startsAt'} type="radio" value={startsAt} />);
+        return (<input
+            name={'startsAt'}
+            type={'radio'}
+            value={startsAt}
+            checked={isChecked}
+            onChange={handleChange}
+        />);
     } else {
         return null;
     }
