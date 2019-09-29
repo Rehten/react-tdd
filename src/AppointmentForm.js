@@ -10,14 +10,16 @@ export const AppointmentForm = ({
                                     availableTimeSlots
                                 }) => {
     const [appointment, setAppointment] = useState({service});
-    const handleSelect = ({target}) => setAppointment(form => ({service: target.value}));
+    const handleSelect = ({target}) => setAppointment(() => {
+        return ({service: target.value});
+    });
     const handleStartsAtChange = useCallback(({target: {value}}) => setAppointment(appointment => {
         return ({...appointment, startsAt: parseInt(value)});
     }));
 
     return (<form id={'appointment'} onSubmit={() => onSubmit(appointment)}>
         <label htmlFor="service">Customer:</label>
-        <select value={appointment.service} id={'service'} name={'service'} readOnly>
+        <select value={appointment.service} id={'service'} name={'service'} onChange={handleSelect}>
             <option onClick={handleSelect}/>
             {selectableServices.map(s => (<option key={s} value={s} onClick={handleSelect}>{s}</option>))}
         </select>
@@ -40,7 +42,15 @@ AppointmentForm.defaultProps = {
         'Cat',
         'Dog'
     ],
-    availableTimeSlots: []
+    availableTimeSlots: [
+        {startsAt: new Date().setHours(9, 0, 0, 0)},
+        {startsAt: new Date().setHours(9, 30, 0, 0)},
+        {startsAt: new Date().setHours(10, 30, 0, 0)},
+        {startsAt: new Date().setHours(11, 30, 0, 0)},
+        {startsAt: new Date().setHours(13, 30, 0, 0)},
+        {startsAt: new Date().setHours(14, 30, 0, 0)},
+        {startsAt: new Date().setHours(15, 30, 0, 0)},
+    ]
 };
 
 const TimeSlotTable = ({salonOpensAt, salonClosesAt, today, availableTimeSlots, checkedTimeSlot, handleChange}) => {
