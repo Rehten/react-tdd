@@ -50,21 +50,32 @@ const TimeSlotTable = ({salonOpensAt, salonClosesAt, today, availableTimeSlots})
         </tr>
         </thead>
         <tbody>
-        {timeSlots.map(timeSlot => (<tr key={timeSlot}>
-            <th>{toTimeValue(timeSlot)}</th>
-            {dates.map(date => (<td key={date}>
-                {
-                    availableTimeSlots
-                        .some(availableTimeSlot => availableTimeSlot.startsAt === mergeDateAndTime(date, timeSlot))
-                        ?
-                        <input type="radio"/>
-                        :
-                        null
-                }
-            </td>))}
-        </tr>))}
+        {timeSlots.map(timeSlot => {
+            return (<tr key={timeSlot}>
+                <th>{toTimeValue(timeSlot)}</th>
+                {dates.map(date => (<td key={date}>
+                    {
+                        <RadioButtonIfAvailable availableTimeSlots={availableTimeSlots} date={date}
+                                                timeSlot={timeSlot}/>
+                    }
+                </td>))}
+            </tr>)
+        })}
         </tbody>
     </table>);
+};
+
+const RadioButtonIfAvailable = ({availableTimeSlots, date, timeSlot}) => {
+    const isButtonExists = (availableTimeSlots
+        .some(availableTimeSlot => availableTimeSlot.startsAt === mergeDateAndTime(date, timeSlot)));
+    const startsAt = mergeDateAndTime(date, timeSlot);
+
+    if (isButtonExists) {
+        return (<input name={'startsAt'} type="radio" value={startsAt} />);
+    } else {
+        return null;
+    }
+
 };
 
 const dayliTimeSlots = (salonOpensAt, salonClosesAt) => {
