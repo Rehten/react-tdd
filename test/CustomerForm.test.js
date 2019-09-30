@@ -15,6 +15,15 @@ describe('CustomerForm', () => {
         expect(formElement.type).toEqual('text');
     };
     const labelFor = formElementName => container.querySelector(`label[for="${formElementName}"]`);
+    const singleArgumentSpy = () => {
+        let receivedArguments;
+
+        return {
+            fn: (...args) => (receivedArguments = args),
+            receivedArguments: () => receivedArguments,
+            receivedArgument: (index) => receivedArguments[index]
+        };
+    };
 
     // Generalization of tests
     const itRendersAsATextBox = (fieldName) => {
@@ -48,15 +57,19 @@ describe('CustomerForm', () => {
         });
     };
 
-    const itSaveExistingFieldDataWhenSubmitting = (fieldName, fieldValue) => {
+    const itSaveExistingFieldDataWhenSubmitting = (fieldName) => {
         it(`save existing ${fieldName} when submitted`, async () => {
-            expect.hasAssertions();
+            const spy = singleArgumentSpy();
 
-            render(<CustomerForm {...{[fieldName]: fieldValue}} onSubmit={(form) => {
-                expect(form[fieldName]).toEqual(fieldValue);
-            }} />);
+            render(<CustomerForm
+                {...{[fieldName]: 'value'}}
+                onSubmit={spy.fn}
+            />);
 
-            await ReactTestUtils.Simulate.submit(form('customer'));
+            ReactTestUtils.Simulate.submit(form('customer'));
+
+            expect(spy.receivedArguments()).toBeDefined();
+            expect(spy.receivedArgument(0)[fieldName]).toEqual('value');
         });
     };
 
@@ -92,7 +105,7 @@ describe('CustomerForm', () => {
 
         itAssignsAnIdThatMatchesTheLabelIdToTheFieldName('firstName');
 
-        itSaveExistingFieldDataWhenSubmitting('firstName', 'Ashley');
+        itSaveExistingFieldDataWhenSubmitting('firstName');
 
         itSavesNewNameWhenSubmitted('firstName', 'Ashley', 'Jamie');
     });
@@ -106,7 +119,7 @@ describe('CustomerForm', () => {
 
         itAssignsAnIdThatMatchesTheLabelIdToTheFieldName('lastName');
 
-        itSaveExistingFieldDataWhenSubmitting('lastName', 'Green');
+        itSaveExistingFieldDataWhenSubmitting('lastName');
 
         itSavesNewNameWhenSubmitted('lastName', 'Green', 'Blue');
     });
@@ -120,7 +133,7 @@ describe('CustomerForm', () => {
 
         itAssignsAnIdThatMatchesTheLabelIdToTheFieldName('phoneNumber');
 
-        itSaveExistingFieldDataWhenSubmitting('phoneNumber', '79125577556');
+        itSaveExistingFieldDataWhenSubmitting('phoneNumber');
 
         itSavesNewNameWhenSubmitted('phoneNumber', '79125577556', '79865522883');
     });
