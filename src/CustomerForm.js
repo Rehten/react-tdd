@@ -1,10 +1,19 @@
 import React, {useState} from 'react';
 
-export const CustomerForm = ({firstName, lastName, phoneNumber, onSubmit}) => {
+export const CustomerForm = ({firstName, lastName, phoneNumber, onSubmit, fetch}) => {
     const [customer, setCustomer] = useState({firstName, lastName, phoneNumber});
     const handleChangeCustomer = ({target}) => setCustomer(customer => ({...customer, [target.name]: target.value}));
+    const handleSubmit = () => {
+        onSubmit(customer);
 
-    return (<form id={'customer'} onSubmit={() => onSubmit(customer)}>
+        fetch('/customers', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {'Content-Type': 'application/json'}
+        })
+    };
+
+    return (<form id={'customer'} onSubmit={handleSubmit}>
                 <label htmlFor="firstName">First name</label>
                 <input
                     type="text"

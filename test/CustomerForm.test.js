@@ -4,6 +4,20 @@ import ReactTestUtils from 'react-dom/test-utils';
 import {createContainer} from "./domManipulators";
 import {CustomerForm} from "../src/CustomerForm";
 
+// расширение Jest - проверка вызова функции
+expect.extend({
+    toHaveBeenCalled(received) {
+        if (received.receivedArguments() === undefined) {
+            return {
+                pass: false,
+                message: () => 'Spy was not called.'
+            }
+        } else {
+            return {pass: true, message: () => 'Spy was called!'};
+        }
+    }
+});
+
 describe('CustomerForm', () => {
     let render, container;
     const form = id => container.querySelector('form[id="' + id + '"]');
@@ -24,6 +38,7 @@ describe('CustomerForm', () => {
             receivedArgument: (index) => receivedArguments[index]
         };
     };
+    const fetchSpy = singleArgumentSpy();
 
     // Generalization of tests
     const itRendersAsATextBox = (fieldName) => {
@@ -64,10 +79,12 @@ describe('CustomerForm', () => {
             render(<CustomerForm
                 {...{[fieldName]: 'value'}}
                 onSubmit={spy.fn}
+                fetch={fetchSpy.fn}
             />);
 
             ReactTestUtils.Simulate.submit(form('customer'));
 
+            expect(spy).toHaveBeenCalled();
             expect(spy.receivedArguments()).toBeDefined();
             expect(spy.receivedArgument(0)[fieldName]).toEqual('value');
         });
@@ -79,7 +96,7 @@ describe('CustomerForm', () => {
 
             render(<CustomerForm {...{[fieldName]: fieldValue}} onSubmit={(form) => {
                 expect(form[fieldName]).toEqual(newFieldValue);
-            }} />);
+            }} fetch={fetchSpy.fn} />);
 
             await ReactTestUtils.Simulate.change(field(fieldName), { target: {value: newFieldValue, name: fieldName}});
 
@@ -144,6 +161,24 @@ describe('CustomerForm', () => {
         expect(container.querySelector('input[type="submit"]')).not.toBeNull();
         expect(container.querySelector('input[type="submit"]')).toBeDefined();
         expect(container.querySelector('input[type="submit"]').value).toEqual('Add');
+    });
+
+    it('calls the fetch with the right properties when submitting data', async () => {
+
+        render(<CustomerForm fetch={fetchSpy.fn} onSubmit={() => {}} />);
+
+        ReactTestUtils.Simulate.submit(form('customer'));
+
+        expect(fetchSpy).toHaveBeenCalled();
+        expect(fetchSpy.receivedArgument(0)).toEqual('/customers');
+
+        {
+            const fetchOpts = fetchSpy.receivedArgument(1);
+
+            expect(fetchOpts.method).toEqual('POST');
+            expect(fetchOpts.credentials).toEqual('same-origin');
+            expect(fetchOpts.headers).toEqual({'Content-Type': 'application/json'});
+        }
     });
 
 });
