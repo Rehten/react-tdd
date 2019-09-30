@@ -1,16 +1,20 @@
 import React, {useState} from 'react';
 
-export const CustomerForm = ({firstName, lastName, phoneNumber, onSubmit}) => {
+export const CustomerForm = ({firstName, lastName, phoneNumber, onSave}) => {
     const [customer, setCustomer] = useState({firstName, lastName, phoneNumber});
     const handleChangeCustomer = ({target}) => setCustomer(customer => ({...customer, [target.name]: target.value}));
-    const handleSubmit = () => {
-        onSubmit(customer);
-
-        fetch('/customers', {
+    const handleSubmit = async () => {
+        const result = await window.fetch('/customers', {
             method: 'POST',
             credentials: 'same-origin',
             headers: {'Content-Type': 'application/json'}
-        })
+        });
+
+        if (result.ok) {
+            const customerWithId = await result.json();
+
+            onSave(customerWithId);
+        }
     };
 
     return (<form id={'customer'} onSubmit={handleSubmit}>
@@ -43,5 +47,6 @@ export const CustomerForm = ({firstName, lastName, phoneNumber, onSubmit}) => {
 };
 
 CustomerForm.defaultProps = {
-    fetch: async () => {}
+    fetch: async () => {},
+    onSave: () => {}
 };

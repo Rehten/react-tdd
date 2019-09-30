@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactTestUtils from 'react-dom/test-utils';
+import ReactTestUtils, {act} from 'react-dom/test-utils';
 import {createContainer} from "./domManipulators";
 import {CustomerForm} from "../src/CustomerForm";
 
@@ -31,11 +31,17 @@ describe('CustomerForm', () => {
     const labelFor = formElementName => container.querySelector(`label[for="${formElementName}"]`);
     const spy = () => {
         let receivedArguments;
+        let returnValue;
 
         return {
-            fn: (...args) => (receivedArguments = args),
+            fn: (...args) => {
+                (receivedArguments = args);
+
+                return returnValue;
+            },
             receivedArguments: () => receivedArguments,
-            receivedArgument: (index) => receivedArguments[index]
+            receivedArgument: (index) => receivedArguments[index],
+            stubReturnValue: value => (returnValue = value)
         };
     };
     const fetchSpy = spy();
@@ -73,53 +79,13 @@ describe('CustomerForm', () => {
         });
     };
 
-    const itSaveExistingFieldDataWhenSubmitting = (fieldName) => {
-        it(`save existing ${fieldName} when submitted`, async () => {
-            const $spy = spy();
-
-            render(<CustomerForm
-                {...{[fieldName]: 'value'}}
-                onSubmit={$spy.fn}
-            />);
-
-            ReactTestUtils.Simulate.submit(form('customer'));
-
-            expect($spy).toHaveBeenCalled();
-            expect($spy.receivedArguments()).toBeDefined();
-            expect($spy.receivedArgument(0)[fieldName]).toEqual('value');
-        });
-    };
-
-    const itSavesNewNameWhenSubmitted = (fieldName, fieldValue, newFieldValue) => {
-        it('saves new name when submitted', async () => {
-            expect.hasAssertions();
-
-            render(<CustomerForm {...{[fieldName]: fieldValue}} onSubmit={(form) => {
-                expect(form[fieldName]).toEqual(newFieldValue);
-            }} />);
-
-            await ReactTestUtils.Simulate.change(field(fieldName), {target: {value: newFieldValue, name: fieldName}});
-
-            await ReactTestUtils.Simulate.submit(form('customer'));
-
-
-            expect(fetchSpy).toHaveBeenCalled();
-            expect(fetchSpy.receivedArgument(0)).toEqual('/customers');
-
-            {
-                const fetchOpts = fetchSpy.receivedArgument(1);
-
-                expect(fetchOpts.method).toEqual('POST');
-                expect(fetchOpts.credentials).toEqual('same-origin');
-                expect(fetchOpts.headers).toEqual({'Content-Type': 'application/json'});
-                // expect(JSON.parse(fetchOpts.body)[fieldName]).toEqual('value');
-            }
-        });
-    };
+    const fetchResponseOk = body => Promise.resolve({ok: true, json: () => Promise.resolve(body)});
+    const fetchResponseError = () => Promise.resolve({ok: false});
 
     beforeEach(() => {
         ({render, container} = createContainer());
         window.fetch = fetchSpy.fn;
+        fetchSpy.stubReturnValue(fetchResponseOk({}));
     });
 
     afterEach(() => {
@@ -139,10 +105,6 @@ describe('CustomerForm', () => {
         itRenderALabelForField('firstName', 'First name');
 
         itAssignsAnIdThatMatchesTheLabelIdToTheFieldName('firstName');
-
-        itSaveExistingFieldDataWhenSubmitting('firstName');
-
-        itSavesNewNameWhenSubmitted('firstName', 'Ashley', 'Jamie');
     });
 
     describe('last name field', () => {
@@ -153,10 +115,6 @@ describe('CustomerForm', () => {
         itRenderALabelForField('lastName', 'Last name');
 
         itAssignsAnIdThatMatchesTheLabelIdToTheFieldName('lastName');
-
-        itSaveExistingFieldDataWhenSubmitting('lastName');
-
-        itSavesNewNameWhenSubmitted('lastName', 'Green', 'Blue');
     });
 
     describe('phone number field', () => {
@@ -167,10 +125,6 @@ describe('CustomerForm', () => {
         itRenderALabelForField('phoneNumber', 'Phone number');
 
         itAssignsAnIdThatMatchesTheLabelIdToTheFieldName('phoneNumber');
-
-        itSaveExistingFieldDataWhenSubmitting('phoneNumber');
-
-        itSavesNewNameWhenSubmitted('phoneNumber', '79125577556', '79865522883');
     });
 
     it('has a submit button', () => {
@@ -179,6 +133,41 @@ describe('CustomerForm', () => {
         expect(container.querySelector('input[type="submit"]')).not.toBeNull();
         expect(container.querySelector('input[type="submit"]')).toBeDefined();
         expect(container.querySelector('input[type="submit"]').value).toEqual('Add');
+    });
+
+    it('notifies onSave when form is submitted', async () => {
+        const customer = {id: 123};
+
+        fetchSpy.stubReturnValue(fetchResponseOk(customer));
+
+        {
+            const saveSpy = spy();
+
+            render(<CustomerForm onSave={saveSpy.fn} />);
+
+            await act(async () => {
+                ReactTestUtils.Simulate.submit(form('customer'))
+            });
+
+            expect(saveSpy).toHaveBeenCalled();
+            expect(saveSpy.receivedArgument(0)).toEqual({id: 123});
+        }
+    });
+
+    it('does not call onSave if the post request returns an error', async () => {
+        fetchSpy.stubReturnValue(fetchResponseError());
+
+        {
+            const saveSpy = spy();
+
+            render(<CustomerForm onSave={saveSpy.fn} />);
+
+            await act(async () => {
+                ReactTestUtils.Simulate.submit(form('customer'))
+            });
+
+            expect(saveSpy).not.toHaveBeenCalled();
+        }
     });
 
 });
