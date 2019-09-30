@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-export const CustomerForm = ({firstName, lastName, phoneNumber, onSubmit, fetch}) => {
+export const CustomerForm = ({firstName, lastName, phoneNumber, onSubmit}) => {
     const [customer, setCustomer] = useState({firstName, lastName, phoneNumber});
     const handleChangeCustomer = ({target}) => setCustomer(customer => ({...customer, [target.name]: target.value}));
     const handleSubmit = () => {
@@ -40,4 +40,8 @@ export const CustomerForm = ({firstName, lastName, phoneNumber, onSubmit, fetch}
                 />
                 <input type="submit" value={'Add'} />
             </form>);
+};
+
+CustomerForm.defaultProps = {
+    fetch: async () => {}
 };
