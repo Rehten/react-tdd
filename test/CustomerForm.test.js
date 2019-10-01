@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import ReactTestUtils, {act} from 'react-dom/test-utils';
 import {createContainer} from "./domManipulators";
 import {CustomerForm} from "../src/CustomerForm";
+import {fetchResponseError, fetchResponseOk} from "./spyHelpers";
 
 describe('CustomerForm', () => {
     let render, container;
@@ -49,9 +50,6 @@ describe('CustomerForm', () => {
             expect(field(fieldName).id).toEqual(fieldName);
         });
     };
-
-    const fetchResponseOk = body => Promise.resolve({ok: true, json: () => Promise.resolve(body)});
-    const fetchResponseError = () => Promise.resolve({ok: false});
 
     beforeEach(() => {
         ({render, container} = createContainer());
