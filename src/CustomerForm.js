@@ -1,21 +1,26 @@
 import React, {useState} from 'react';
 
 export const CustomerForm = ({firstName, lastName, phoneNumber, onSave}) => {
+    const [error, setError] = useState(false);
     const [customer, setCustomer] = useState({firstName, lastName, phoneNumber});
     const handleChangeCustomer = ({target}) => setCustomer(customer => ({...customer, [target.name]: target.value}));
     const handleSubmit = async e => {
         e.preventDefault();
 
-        const result = await window.fetch('/customers', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {'Content-Type': 'application/json'}
-        });
+        {
+            const result = await window.fetch('/customers', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {'Content-Type': 'application/json'}
+            });
 
-        if (result.ok) {
-            const customerWithId = await result.json();
+            if (result.ok) {
+                const customerWithId = await result.json();
 
-            onSave(customerWithId);
+                onSave(customerWithId);
+            } else {
+                setError(true);
+            }
         }
     };
 
@@ -28,6 +33,7 @@ export const CustomerForm = ({firstName, lastName, phoneNumber, onSave}) => {
             value={firstName}
             onChange={handleChangeCustomer}
         />
+        {error ? <Error /> : null}
         <label htmlFor="lastName">Last name</label>
         <input
             type="text"
@@ -54,3 +60,5 @@ CustomerForm.defaultProps = {
     onSave: () => {
     }
 };
+
+const Error = () => (<div className={'error'}> An error occured during save.</div>);
