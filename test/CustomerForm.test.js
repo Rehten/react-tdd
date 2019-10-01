@@ -15,22 +15,7 @@ describe('CustomerForm', () => {
         expect(formElement.type).toEqual('text');
     };
     const labelFor = formElementName => container.querySelector(`label[for="${formElementName}"]`);
-    const spy = () => {
-        let receivedArguments;
-        let returnValue;
-
-        return {
-            fn: (...args) => {
-                (receivedArguments = args);
-
-                return returnValue;
-            },
-            receivedArguments: () => receivedArguments,
-            receivedArgument: (index) => receivedArguments[index],
-            stubReturnValue: value => (returnValue = value)
-        };
-    };
-    const fetchSpy = spy();
+    const fetchSpy = jest.fn(() => fetchResponseOk({}));
     const originalFetch = window.fetch;
 
     // Generalization of tests
@@ -70,8 +55,8 @@ describe('CustomerForm', () => {
 
     beforeEach(() => {
         ({render, container} = createContainer());
-        window.fetch = fetchSpy.fn;
-        fetchSpy.stubReturnValue(fetchResponseOk({}));
+        window.fetch = fetchSpy;
+        fetchSpy.mockReturnValue(fetchResponseOk({}));
     });
 
     afterEach(() => {
@@ -124,7 +109,7 @@ describe('CustomerForm', () => {
     it('notifies onSave when form is submitted', async () => {
         const customer = {id: 123};
 
-        fetchSpy.stubReturnValue(fetchResponseOk(customer));
+        fetchSpy.mockReturnValue(fetchResponseOk(customer));
 
         {
             const saveSpy = jest.fn();
@@ -141,7 +126,7 @@ describe('CustomerForm', () => {
     });
 
     it('does not call onSave if the post request returns an error', async () => {
-        fetchSpy.stubReturnValue(fetchResponseError());
+        fetchSpy.mockReturnValue(fetchResponseError());
 
         {
             const saveSpy = jest.fn();
@@ -169,7 +154,7 @@ describe('CustomerForm', () => {
     });
 
     it('renders error message when fetch call fails', async () => {
-        fetchSpy.stubReturnValue(Promise.resolve({ok: false}));
+        fetchSpy.mockReturnValue(fetchResponseError());
 
         render(<CustomerForm/>);
 
