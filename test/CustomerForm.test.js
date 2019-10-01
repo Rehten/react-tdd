@@ -4,20 +4,6 @@ import ReactTestUtils, {act} from 'react-dom/test-utils';
 import {createContainer} from "./domManipulators";
 import {CustomerForm} from "../src/CustomerForm";
 
-// расширение Jest - проверка вызова функции
-expect.extend({
-    toHaveBeenCalled(received) {
-        if (received.receivedArguments() === undefined) {
-            return {
-                pass: false,
-                message: () => 'Spy was not called.'
-            }
-        } else {
-            return {pass: true, message: () => 'Spy was called!'};
-        }
-    }
-});
-
 describe('CustomerForm', () => {
     let render, container;
     const form = id => container.querySelector('form[id="' + id + '"]');
@@ -141,16 +127,16 @@ describe('CustomerForm', () => {
         fetchSpy.stubReturnValue(fetchResponseOk(customer));
 
         {
-            const saveSpy = spy();
+            const saveSpy = jest.fn();
 
-            render(<CustomerForm onSave={saveSpy.fn} />);
+            render(<CustomerForm onSave={saveSpy} />);
 
             await act(async () => {
                 ReactTestUtils.Simulate.submit(form('customer'))
             });
 
             expect(saveSpy).toHaveBeenCalled();
-            expect(saveSpy.receivedArgument(0)).toEqual({id: 123});
+            expect(saveSpy).toHaveBeenCalledWith({id: 123});
         }
     });
 
@@ -158,9 +144,9 @@ describe('CustomerForm', () => {
         fetchSpy.stubReturnValue(fetchResponseError());
 
         {
-            const saveSpy = spy();
+            const saveSpy = jest.fn();
 
-            render(<CustomerForm onSave={saveSpy.fn} />);
+            render(<CustomerForm onSave={saveSpy} />);
 
             await act(async () => {
                 ReactTestUtils.Simulate.submit(form('customer'));
@@ -171,12 +157,12 @@ describe('CustomerForm', () => {
     });
 
     it('prevents the default action when submitting the form', async () => {
-        const preventDefaultSpy = spy();
+        const preventDefaultSpy = jest.fn();
 
         render(<CustomerForm />);
 
         await act(async () => {
-            ReactTestUtils.Simulate.submit(form('customer'), {preventDefault: preventDefaultSpy.fn});
+            ReactTestUtils.Simulate.submit(form('customer'), {preventDefault: preventDefaultSpy});
         });
 
         expect(preventDefaultSpy).toHaveBeenCalled();
