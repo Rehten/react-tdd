@@ -56,7 +56,7 @@ describe('CustomerForm', () => {
     beforeEach(() => {
         ({render, container} = createContainer());
         window.fetch = fetchSpy;
-        fetchSpy.mockReturnValue(fetchResponseOk({}));
+        jest.spyOn(window, 'fetch').mockReturnValue(fetchResponseOk({}));
     });
 
     afterEach(() => {
