@@ -163,11 +163,23 @@ describe('CustomerForm', () => {
             render(<CustomerForm onSave={saveSpy.fn} />);
 
             await act(async () => {
-                ReactTestUtils.Simulate.submit(form('customer'))
+                ReactTestUtils.Simulate.submit(form('customer'));
             });
 
             expect(saveSpy).not.toHaveBeenCalled();
         }
+    });
+
+    it('prevents the default action when submitting the form', async () => {
+        const preventDefaultSpy = spy();
+
+        render(<CustomerForm />);
+
+        await act(async () => {
+            ReactTestUtils.Simulate.submit(form('customer'), {preventDefault: preventDefaultSpy.fn});
+        });
+
+        expect(preventDefaultSpy).toHaveBeenCalled();
     });
 
 });
