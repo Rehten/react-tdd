@@ -7,7 +7,8 @@ export const AppointmentForm = ({
                                     salonOpensAt,
                                     salonClosesAt,
                                     today,
-                                    availableTimeSlots
+                                    availableTimeSlots,
+                                    customer
                                 }) => {
     const [appointment, setAppointment] = useState({service});
     const handleSelect = ({target}) => setAppointment(() => {
@@ -17,7 +18,19 @@ export const AppointmentForm = ({
         return ({...appointment, startsAt: parseInt(value)});
     }));
 
-    return (<form id={'appointment'} onSubmit={() => onSubmit(appointment)}>
+    return (<form id={'appointment'} onSubmit={async () => {
+        const result = await window.fetch('/appointments', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                ...appointment,
+                customer: customer.id
+            })
+        });
+
+        onSubmit(appointment);
+    }}>
         <label htmlFor="service">Customer:</label>
         <select value={appointment.service} id={'service'} name={'service'} onChange={handleSelect}>
             <option onClick={handleSelect}/>

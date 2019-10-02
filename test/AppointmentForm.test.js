@@ -4,8 +4,12 @@ import ReactTestUtils from 'react-dom/test-utils';
 import {createContainer} from "./domManipulators";
 import {CustomerForm} from "../src/CustomerForm";
 import {AppointmentForm} from "../src/AppointmentForm";
+import {Appointment} from "../src/AppointmentsDayView";
+import {fetchResponseOk} from "./spyHelpers";
+import 'whatwg-fetch';
 
 describe('CustomerForm', () => {
+    const customer = {id: 123};
     let render, container;
     const form = id => container.querySelector('form[id="' + id + '"]');
     const field = name => form('appointment').elements[name];
@@ -18,6 +22,11 @@ describe('CustomerForm', () => {
 
     beforeEach(() => {
         ({render, container} = createContainer());
+        jest.spyOn(window, 'fetch').mockReturnValue(fetchResponseOk(customer));
+    });
+
+    afterEach(() => {
+        window.fetch.mockRestore();
     });
 
     it('renders a form', () => {
@@ -93,7 +102,7 @@ describe('CustomerForm', () => {
         it(`save existing name when submitted`, async () => {
             expect.hasAssertions();
 
-            render(<AppointmentForm service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
+            render(<AppointmentForm customer={customer} service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
                 expect(form.service).toEqual('Qwerty');
             }} />);
 
@@ -103,7 +112,7 @@ describe('CustomerForm', () => {
         it(`save new name when submitted after click option`, async () => {
             expect.hasAssertions();
 
-            render(<AppointmentForm service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
+            render(<AppointmentForm customer={customer} service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
                 expect(form.service).toEqual('');
                 expect(field('service').value).toEqual('');
             }} />);
@@ -116,7 +125,7 @@ describe('CustomerForm', () => {
         it(`save new custom value when submitted after click option`, async () => {
             expect.hasAssertions();
 
-            render(<AppointmentForm service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
+            render(<AppointmentForm customer={customer} service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
                 expect(form.service).toEqual('Abcdef');
                 expect(field('service').value).toEqual('Abcdef');
             }} />);
@@ -218,9 +227,7 @@ describe('CustomerForm', () => {
         });
     });
 
-    it('saves new value when submitted', () => {
-        expect.hasAssertions();
-
+    it('saves new value when submitted', async () => {
         {
             const today = new Date();
             const availableTimeSlots = [
@@ -229,6 +236,7 @@ describe('CustomerForm', () => {
             ];
 
             render(<AppointmentForm
+                customer={customer}
                 availableTimeSlots={availableTimeSlots}
                 today={today}
                 startsAt={availableTimeSlots[0].startsAt}
@@ -243,7 +251,17 @@ describe('CustomerForm', () => {
                 }
             });
 
-            ReactTestUtils.Simulate.submit(form('appointment'));
+            await ReactTestUtils.Simulate.submit(form('appointment'));
         }
-    })
+    });
+
+    it('passes the customer id to fetch when submitted', async () => {
+        render(<AppointmentForm customer={customer}/>);
+
+        await ReactTestUtils.Simulate.submit(form('appointment'));
+
+        {
+            expect(window.fetch).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({body: expect.anything()}));
+        }
+    });
 });
