@@ -4,6 +4,7 @@ import {createContainer} from "./domManipulators";
 import ReactTestUtils, {act} from 'react-dom/test-utils';
 import {fetchResponseOk} from "./spyHelpers";
 import {AppointmentFormLoader} from "../src/AppointmentFormLoader";
+import * as AppointmentFormExports from "../src/AppointmentForm";
 
 describe('AppointmentFormLoader', () => {
     let render, container;
@@ -16,6 +17,12 @@ describe('AppointmentFormLoader', () => {
         ({render, container} = createContainer());
 
         jest.spyOn(window, 'fetch').mockReturnValue(fetchResponseOk(availableTimeSlots));
+        jest.spyOn(AppointmentFormExports, 'AppointmentForm').mockReturnValue(null);
+    });
+
+    afterEach(() => {
+        window.fetch.mockRestore();
+        AppointmentFormExports.AppointmentForm.mockRestore();
     });
 
     it('fetches data when component is mounted', async () => {
@@ -33,5 +40,10 @@ describe('AppointmentFormLoader', () => {
                         }
                     })
             );
+    });
+
+    it('initially passes no data to AppointmentForm', () => {
+        render(<AppointmentFormLoader />);
+
     });
 });
