@@ -30,21 +30,21 @@ describe('CustomerForm', () => {
     });
 
     it('renders a form', () => {
-        render(<AppointmentForm />);
+        render(<AppointmentForm/>);
 
         expect(form('appointment')).not.toBeNull();
     });
 
     describe('service field', () => {
         it('render a select box', () => {
-            render(<AppointmentForm />);
+            render(<AppointmentForm/>);
 
             expect(field('service')).not.toBeNull();
             expect(field('service').tagName).toEqual('SELECT');
         });
 
         it('initially has a blank value', () => {
-            render(<AppointmentForm />);
+            render(<AppointmentForm/>);
 
             const firstNode = field('service').childNodes[0];
 
@@ -62,7 +62,7 @@ describe('CustomerForm', () => {
                 'Extensions'
             ];
 
-            render(<AppointmentForm selectableServices={selectableServices} />);
+            render(<AppointmentForm selectableServices={selectableServices}/>);
 
             {
                 const optionNodes = Array.from(field('service').childNodes);
@@ -76,7 +76,7 @@ describe('CustomerForm', () => {
         it('preselects the existing value', () => {
             const services = ['Cut', 'Blow-dry'];
 
-            render(<AppointmentForm selectableServices={services} service='Blow-dry' />);
+            render(<AppointmentForm selectableServices={services} service='Blow-dry'/>);
 
             expect(findOption(field('service'), 'Blow-dry').selected).toBeTruthy();
         });
@@ -102,9 +102,10 @@ describe('CustomerForm', () => {
         it(`save existing name when submitted`, async () => {
             expect.hasAssertions();
 
-            render(<AppointmentForm customer={customer} service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
-                expect(form.service).toEqual('Qwerty');
-            }} />);
+            render(<AppointmentForm customer={customer} service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']}
+                                    onSubmit={(form) => {
+                                        expect(form.service).toEqual('Qwerty');
+                                    }}/>);
 
             await ReactTestUtils.Simulate.submit(form('appointment'));
         });
@@ -112,10 +113,11 @@ describe('CustomerForm', () => {
         it(`save new name when submitted after click option`, async () => {
             expect.hasAssertions();
 
-            render(<AppointmentForm customer={customer} service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
-                expect(form.service).toEqual('');
-                expect(field('service').value).toEqual('');
-            }} />);
+            render(<AppointmentForm customer={customer} service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']}
+                                    onSubmit={(form) => {
+                                        expect(form.service).toEqual('');
+                                        expect(field('service').value).toEqual('');
+                                    }}/>);
 
             await ReactTestUtils.Simulate.click(field('service').childNodes[0]);
 
@@ -125,10 +127,11 @@ describe('CustomerForm', () => {
         it(`save new custom value when submitted after click option`, async () => {
             expect.hasAssertions();
 
-            render(<AppointmentForm customer={customer} service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']} onSubmit={(form) => {
-                expect(form.service).toEqual('Abcdef');
-                expect(field('service').value).toEqual('Abcdef');
-            }} />);
+            render(<AppointmentForm customer={customer} service={'Qwerty'} selectableServices={['Qwerty', 'Abcdef']}
+                                    onSubmit={(form) => {
+                                        expect(form.service).toEqual('Abcdef');
+                                        expect(field('service').value).toEqual('Abcdef');
+                                    }}/>);
 
             await ReactTestUtils.Simulate.click(field('service').childNodes[2]);
 
@@ -146,7 +149,7 @@ describe('CustomerForm', () => {
         });
 
         it('renders a time slot for every half an hour between open and close times', () => {
-            render(<AppointmentForm salonOpensAt={9} salonClosesAt={11} />);
+            render(<AppointmentForm salonOpensAt={9} salonClosesAt={11}/>);
 
             {
                 const timesOfDay = timeSlotTable().querySelectorAll('tbody >* th');
@@ -160,7 +163,7 @@ describe('CustomerForm', () => {
         });
 
         it('render an empty cell at the start of row', () => {
-            render(<AppointmentForm />);
+            render(<AppointmentForm/>);
 
             {
                 const firstCell = timeSlotTable().querySelector('thead >* th');
@@ -174,7 +177,7 @@ describe('CustomerForm', () => {
         it('renders a wekk of available dates', () => {
             const today = new Date(2018, 11, 1);
 
-            render(<AppointmentForm today={today} />);
+            render(<AppointmentForm today={today}/>);
 
             {
                 const dates = timeSlotTable().querySelectorAll('thead >* th:not(:first-child)');
@@ -193,7 +196,7 @@ describe('CustomerForm', () => {
                 {startsAt: today.setHours(9, 30, 0, 0)}
             ];
 
-            render(<AppointmentForm availableTimeSlots={availableTimeSlots} today={today} />);
+            render(<AppointmentForm availableTimeSlots={availableTimeSlots} today={today}/>);
 
             {
                 const cells = timeSlotTable().querySelectorAll('td');
@@ -204,7 +207,7 @@ describe('CustomerForm', () => {
         });
 
         it('does not render radio buttons for unavailable time slots', () => {
-            render(<AppointmentForm availableTimeSlots={[]} />);
+            render(<AppointmentForm availableTimeSlots={[]}/>);
 
             {
                 const timesOfDay = timeSlotTable().querySelectorAll('input');
@@ -220,7 +223,7 @@ describe('CustomerForm', () => {
                 {startsAt: today.setHours(9, 30, 0, 0)}
             ];
 
-            render(<AppointmentForm availableTimeSlots={availableTimeSlots} today={today} />);
+            render(<AppointmentForm availableTimeSlots={availableTimeSlots} today={today}/>);
 
             expect(startsAtField(0).value).toEqual(availableTimeSlots[0].startsAt.toString());
             expect(startsAtField(1).value).toEqual(availableTimeSlots[1].startsAt.toString());
@@ -260,8 +263,9 @@ describe('CustomerForm', () => {
 
         await ReactTestUtils.Simulate.submit(form('appointment'));
 
-        {
-            expect(window.fetch).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({body: expect.anything()}));
-        }
+        expect(window.fetch).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({body: expect.anything()})
+        );
     });
 });
