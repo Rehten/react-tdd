@@ -5,8 +5,16 @@ export const childrenOf = element => {
         return [];
     }
 
+    if (typeof element.props.children === 'string') {
+        return [element.props.children];
+    }
+
+    if (Array.isArray(element.props.children)) {
+        return element.props.children;
+    }
+
     if (element.props.children) {
-        return (typeof element.props.children === 'string') ? [element.props.children] : element.props.children;
+        return [element.props.children];
     } else {
         return ([]);
     }
