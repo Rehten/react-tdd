@@ -27,7 +27,8 @@ export const createShallowRenderer = () => {
     return {
         render: component => renderer.render(component),
         child: n => childrenOf(renderer.getRenderOutput())[n],
-        elementsMatching: matcherFn => elementsMatching(renderer.getRenderOutput(), matcherFn)
+        elementsMatching: matcherFn => elementsMatching(renderer.getRenderOutput(), matcherFn),
+        elementMatching: matcherFn => elementsMatching(renderer.getRenderOutput(), matcherFn)[0]
     };
 };
 
@@ -38,3 +39,7 @@ const elementsMatching = (element, matcherFn) => {
         return childrenOf(element).reduce((acc, child) => ([...acc, ...elementsMatching(child, matcherFn)]), []);
     }
 };
+
+export const type = typeName => element => (element.type === typeName);
+
+export const click = element => element.props.onClick();
