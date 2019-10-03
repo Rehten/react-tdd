@@ -9,11 +9,7 @@ export const App = () => {
         []
     );
 
-    console.log('-----------------------');
-    console.log(view);
-    console.log('-----------------------');
-
-    return (<React.Fragment>
+    return ((view === 'addCustomer') ? <CustomerForm /> : <React.Fragment>
         <div className='button-bar'>
             <button
                 type="button"
@@ -21,7 +17,6 @@ export const App = () => {
                 onClick={transitionToAddCustomer}
             >Add customer and appointment</button>
         </div>
-        {view === 'addCustomer' ? <CustomerForm /> : <React.Fragment />}
-        <AppointmentsDayViewLoader/>
+        <AppointmentsDayViewLoader />
     </React.Fragment>);
 };
