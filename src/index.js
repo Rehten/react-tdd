@@ -4,5 +4,6 @@ import {AppointmentsDayView} from "./AppointmentsDayView";
 import {sampleAppointments} from "./sampleData";
 import {CustomerForm} from "./CustomerForm";
 import {AppointmentForm} from "./AppointmentForm";
+import {App} from "./App";
 
-ReactDOM.render(<AppointmentForm />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('root'));

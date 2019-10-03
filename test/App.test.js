@@ -13,6 +13,7 @@ describe('App', () => {
         click(elementMatching(id('addCustomer')));
     };
     const saveCustomer = customer => elementMatching(type(CustomerForm)).props.onSave(customer);
+    const saveAppointment = () => elementMatching(type(AppointmentFormLoader)).props.onSubmit();
 
     beforeEach(() => {
         ({render, elementMatching, child} = createShallowRenderer());
@@ -72,5 +73,13 @@ describe('App', () => {
         saveCustomer(customer);
 
         expect(elementMatching(type(AppointmentFormLoader)).props.customer).toBe(customer);
+    });
+
+    it('renders AppointmentDayViewLoader after AppointmentForm is submitted', async () => {
+        beginAddCustomerAndAppointment();
+        saveCustomer();
+        saveAppointment();
+
+        expect(elementMatching(type(AppointmentsDayViewLoader))).toBeDefined();
     });
 });

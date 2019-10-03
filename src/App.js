@@ -17,12 +17,15 @@ export const App = () => {
         },
         []
     );
+    const transitionToDayView = useCallback(() => {
+        setView('dayView');
+    }, []);
 
     switch (view) {
         case 'addCustomer':
             return (<CustomerForm onSave={transitionToAddAppointment} />);
         case 'addAppointment':
-            return (<AppointmentFormLoader customer={customer} />);
+            return (<AppointmentFormLoader customer={customer} onSubmit={transitionToDayView} />);
         default:
             return (<React.Fragment>
                 <div className='button-bar'>
