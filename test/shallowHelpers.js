@@ -42,5 +42,6 @@ const elementsMatching = (element, matcherFn) => {
 
 export const type = typeName => element => (element.type === typeName);
 export const className = className => element => (new RegExp(className).test(element.props && element.props.className));
+export const id = id => element => (new RegExp(id).test(element.props && element.props.id));
 
 export const click = element => element.props.onClick();
