@@ -1,5 +1,7 @@
 import React from 'react';
-import {childrenOf} from './shallowHelpers';
+import {childrenOf, createShallowRenderer} from './shallowHelpers';
+
+const TestComponent = ({children}) => (<React.Fragment>{children}</React.Fragment>);
 
 describe('childrenOf', () => {
     it('returns no children', () => {
@@ -25,5 +27,19 @@ describe('childrenOf', () => {
 
     it('returns array of children for elements with one child', () => {
         expect(childrenOf(<div><p>A</p></div>)).toEqual([<p>A</p>]);
+    });
+});
+
+describe('child', () => {
+    let render, child;
+
+    beforeEach(() => {
+        ({render, child} = createShallowRenderer());
+    });
+
+    it('returns undefined if the children does not exist', () => {
+        render(<TestComponent/>);
+
+        expect(child(0)).not.toBeDefined();
     });
 });
