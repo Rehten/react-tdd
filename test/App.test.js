@@ -3,6 +3,7 @@ import {childrenOf, className, click, createShallowRenderer, id, type} from './s
 import {App} from '../src/App';
 import {AppointmentsDayViewLoader} from "../src/AppointmentsDayViewLoader";
 import {CustomerForm} from "../src/CustomerForm";
+import {AppointmentFormLoader} from "../src/AppointmentFormLoader";
 
 describe('App', () => {
     let render, elementMatching, child;
@@ -11,6 +12,7 @@ describe('App', () => {
 
         click(elementMatching(id('addCustomer')));
     };
+    const saveCustomer = customer => elementMatching(type(CustomerForm)).props.onSave(customer);
 
     beforeEach(() => {
         ({render, elementMatching, child} = createShallowRenderer());
@@ -54,5 +56,12 @@ describe('App', () => {
     it('hides the button bar when CustomerForm is being displayed', async () => {
         beginAddCustomerAndAppointment();
         expect(child(0)).not.toBeDefined();
+    });
+
+    it('displays the AppointmentFormLoader after CustomerForm is submitted', async () => {
+        beginAddCustomerAndAppointment();
+        saveCustomer();
+
+        expect(elementMatching(type(AppointmentFormLoader))).toBeDefined();
     });
 });
