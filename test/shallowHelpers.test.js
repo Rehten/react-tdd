@@ -2,6 +2,7 @@ import React from 'react';
 import {childrenOf, createShallowRenderer} from './shallowHelpers';
 
 const TestComponent = ({children}) => (<React.Fragment>{children}</React.Fragment>);
+const type = typeName => element => (element.type === typeName);
 
 describe('childrenOf', () => {
     it('returns no children', () => {
@@ -51,5 +52,32 @@ describe('child', () => {
 
         expect(child(0)).toEqual(<p>A</p>);
         expect(child(1)).toEqual(<p>B</p>);
+    });
+});
+
+describe('elementsMatching', () => {
+    let render, elementsMatching;
+
+    beforeEach(() => {
+        ({render, elementsMatching} = createShallowRenderer());
+    });
+
+    it('finds multiple direct children', () => {
+        render(<TestComponent>
+            <p>A</p>
+            <p>B</p>
+        </TestComponent>);
+
+        expect(elementsMatching(type('p'))).toEqual([<p>A</p>, <p>B</p>]);
+    });
+
+    it('finds indirect children', () => {
+        render(<TestComponent>
+            <div>
+                <p>A</p>
+            </div>
+        </TestComponent>);
+
+        expect(elementsMatching(type('p'))).toEqual([<p>A</p>]);
     });
 });
