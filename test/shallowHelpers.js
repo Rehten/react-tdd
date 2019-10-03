@@ -26,6 +26,6 @@ export const createShallowRenderer = () => {
 
     return {
         render: component => renderer.render(component),
-        child: n => undefined
+        child: n => childrenOf(renderer.getRenderOutput())[n]
     };
 };
