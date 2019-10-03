@@ -18,4 +18,8 @@ describe('childrenOf', () => {
     it('returns text as array of one item', () => {
         expect(childrenOf(<div>text</div>)).toEqual(['text']);
     });
+
+    it('returns no items for text', () => {
+        expect(childrenOf('text')).toEqual([]);
+    });
 });
