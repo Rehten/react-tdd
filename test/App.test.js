@@ -64,4 +64,13 @@ describe('App', () => {
 
         expect(elementMatching(type(AppointmentFormLoader))).toBeDefined();
     });
+
+    it('passes the customer to the AppointmentForm', async () => {
+        const customer = {id: 123};
+
+        beginAddCustomerAndAppointment();
+        saveCustomer(customer);
+
+        expect(elementMatching(type(AppointmentFormLoader)).props.customer).toBe(customer);
+    });
 });
