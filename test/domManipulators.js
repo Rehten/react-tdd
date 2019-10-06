@@ -1,6 +1,8 @@
 import ReactDOM from 'react-dom';
 import ReactTestUtils, {act} from 'react-dom/test-utils';
 
+const simulateEvent = eventName => (element, eventData) => ReactTestUtils.Simulate[eventName](element, eventData);
+
 export const createContainer = () => {
     const container = document.createElement('div');
 
@@ -9,6 +11,7 @@ export const createContainer = () => {
         render: component => act(() => {
             ReactDOM.render(component, container)
         }),
-        container
+        container,
+        blur: simulateEvent('blur')
     };
 };

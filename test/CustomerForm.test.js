@@ -6,7 +6,7 @@ import {CustomerForm} from "../src/CustomerForm";
 import {fetchResponseError, fetchResponseOk} from "./spyHelpers";
 
 describe('CustomerForm', () => {
-    let render, container;
+    let render, container, blur;
     const form = id => container.querySelector('form[id="' + id + '"]');
     const field = name => form('customer').elements[name];
     const expectToBeInputFieldTypeText = formElement => {
@@ -52,7 +52,7 @@ describe('CustomerForm', () => {
     };
 
     beforeEach(() => {
-        ({render, container} = createContainer());
+        ({render, container, blur} = createContainer());
         window.fetch = fetchSpy;
         jest.spyOn(window, 'fetch').mockReturnValue(fetchResponseOk({}));
     });
@@ -166,6 +166,15 @@ describe('CustomerForm', () => {
             expect(errorElement).not.toBeNull();
             expect(errorElement.textContent).toMatch('error occured');
         }
+    });
+
+    it('displays error after blur when first name field is blank', () => {
+        render(<CustomerForm />);
+
+        blur(field('firstName'), new Event('blur'));
+
+        expect(container.querySelector('.error')).not.toBeNull();
+        expect(container.querySelector('.error').textContent).toMatch('First name is required');
     });
 
 });

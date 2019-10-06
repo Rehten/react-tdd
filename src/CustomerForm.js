@@ -1,6 +1,24 @@
 import React, {useState} from 'react';
 
 export const CustomerForm = ({firstName, lastName, phoneNumber, onSave}) => {
+    const required = value => (!value || value.trim() === '') ? 'First name is required' : undefined;
+    const [validationErrors, setValidationErrors] = useState({});
+    const handleBlur = ({target}) => {
+        const result = required(target.value);
+        setValidationErrors({
+            ...validationErrors,
+            firstName: result
+        });
+    };
+    const hasFirstNameError = () => validationErrors.firstName !== undefined;
+    const renderFirstNameError = () => {
+
+        if (hasFirstNameError()) {
+            return (
+                <span className={'error'}>{validationErrors.firstName}</span>
+            );
+        }
+    };
     const [error, setError] = useState(false);
     const [customer, setCustomer] = useState({firstName, lastName, phoneNumber});
     const handleChangeCustomer = ({target}) => setCustomer(customer => ({...customer, [target.name]: target.value}));
@@ -32,8 +50,9 @@ export const CustomerForm = ({firstName, lastName, phoneNumber, onSave}) => {
             id={'firstName'}
             value={firstName}
             onChange={handleChangeCustomer}
+            onBlur={handleBlur}
         />
-        {error ? <Error /> : null}
+        {renderFirstNameError()}
         <label htmlFor="lastName">Last name</label>
         <input
             type="text"
@@ -51,6 +70,7 @@ export const CustomerForm = ({firstName, lastName, phoneNumber, onSave}) => {
             onChange={handleChangeCustomer}
         />
         <input type="submit" value={'Add'}/>
+        {error ? <Error /> : null}
     </form>);
 };
 
